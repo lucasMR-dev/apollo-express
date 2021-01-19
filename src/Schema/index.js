@@ -15,5 +15,4 @@ schemaComposer.Mutation.addFields({
     ...TaskMutation,
 });
 
-const graphqlSchema = schemaComposer.buildSchema();
-module.exports = graphqlSchema;
+module.exports = schemaComposer.buildSchema();

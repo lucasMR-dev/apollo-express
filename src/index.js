@@ -6,7 +6,7 @@ const graphQLSchema = require('./Schema');
 
 // Apollo Server Init
 const server = new ApolloServer({
-    graphQLSchema
+    schema: graphQLSchema
 });
 
 // Express Service Init
