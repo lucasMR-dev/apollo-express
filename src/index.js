@@ -2,19 +2,24 @@ const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const moongose = require('mongoose');
 const config = require('./config');
-const Schema = require('./Schema');
+const graphQLSchema = require('./Schema');
 
-const apollo = new ApolloServer({
-    schema: Schema
+// Apollo Server Init
+const server = new ApolloServer({
+    graphQLSchema
 });
 
-const server = express();
-apollo.applyMiddleware({
-  server,
+// Express Service Init
+const app = express();
+
+// Apollo Config
+server.applyMiddleware({
+  app,
   cors: true
 });
 
-server.listen(config.PORT, () => {
+// Express Config and MongoDB config
+app.listen(config.PORT, () => {
   moongose.connect(config.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -23,8 +28,7 @@ server.listen(config.PORT, () => {
   });
 });
 
+// Log once server start up
 const db = moongose.connection;
-
 db.on("error", (err) => console.log(err));
-
 db.once("open", () => console.log(`🚀 Server listening on port ${config.PORT}`));

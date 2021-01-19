@@ -1,24 +1,32 @@
 const TaskTC = require('../Models/task');
 
 const TaskQuery = {
-    taskById: TaskTC.getResolver('findById'),
-    taskByIds: TaskTC.getResolver('findByIds'),
-    taskOne: TaskTC.getResolver('findOne'),
-    taskMany: TaskTC.getResolver('findMany'),
-    taskCount: TaskTC.getResolver('count'),
-    taskConnection: TaskTC.getResolver('connection'),
-    taskPagination: TaskTC.getResolver('pagination'),
+    taskById: TaskTC.mongooseResolvers.findById(),
+    taskByIds: TaskTC.mongooseResolvers.findByIds(),
+    taskOne: TaskTC.mongooseResolvers.findOne(),
+    taskMany: TaskTC.mongooseResolvers.findMany(),
+    taskDataLoader: TaskTC.mongooseResolvers.dataLoader(),
+    taskDataLoaderMany: TaskTC.mongooseResolvers.dataLoaderMany(),
+    taskByIdLean: TaskTC.mongooseResolvers.findByIdLean(),
+    taskByIdsLean: TaskTC.mongooseResolvers.findByIdsLean(),
+    taskOneLean: TaskTC.mongooseResolvers.findOneLean(),
+    taskManyLean: TaskTC.mongooseResolvers.findManyLean(),
+    taskDataLoaderLean: TaskTC.mongooseResolvers.dataLoaderLean(),
+    taskDataLoaderManyLean: TaskTC.mongooseResolvers.dataLoaderManyLean(),
+    taskCount: TaskTC.mongooseResolvers.count(),
+    taskConnection: TaskTC.mongooseResolvers.connection(),
+    taskPagination: TaskTC.mongooseResolvers.pagination()
 };
 
 const TaskMutation = {
-    taskCreateOne: TaskTC.getResolver('createOne'),
-    taskCreateMany: TaskTC.getResolver('createMany'),
-    taskUpdateById: TaskTC.getResolver('updateById'),
-    taskUpdateOne: TaskTC.getResolver('updateOne'),
-    taskUpdateMany: TaskTC.getResolver('updateMany'),
-    taskRemoveById: TaskTC.getResolver('removeById'),
-    taskRemoveOne: TaskTC.getResolver('removeOne'),
-    taskRemoveMany: TaskTC.getResolver('removeMany'),
+    taskCreateOne: TaskTC.mongooseResolvers.createOne(),
+    taskCreateMany: TaskTC.mongooseResolvers.createMany(),
+    taskUpdateById: TaskTC.mongooseResolvers.updateById(),
+    taskUpdateOne: TaskTC.mongooseResolvers.updateOne(),
+    taskUpdateMany: TaskTC.mongooseResolvers.updateMany(),
+    taskRemoveById: TaskTC.mongooseResolvers.removeById(),
+    taskRemoveOne: TaskTC.mongooseResolvers.removeOne(),
+    taskRemoveMany: TaskTC.mongooseResolvers.removeMany()
 };
 
 module.exports = { TaskQuery, TaskMutation };
