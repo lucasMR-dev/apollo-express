@@ -2,16 +2,16 @@ const { SchemaComposer } = require('graphql-compose');
 
 const schemaComposer = new SchemaComposer();
 
-const { ProyectQuery, ProyectMutation } = require('./proyects');
-const { TaskQuery, TaskMutation } = require('./tasks');
+const { UserQuery, UserMutation } = require('./user');
+const { TaskQuery, TaskMutation } = require('./task');
 
 schemaComposer.Query.addFields({
-    ...ProyectQuery,
+    ...UserQuery,
     ...TaskQuery,
 });
 
 schemaComposer.Mutation.addFields({
-    ...ProyectMutation,
+    ...UserMutation,
     ...TaskMutation,
 });
 

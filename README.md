@@ -5,12 +5,15 @@ This project integrate ExpressJS with [Apollo Express package](https://github.co
 ## Installation
 
 Clone the repository to your machine
+
 `git clone git@gitlab.com:vgr-dev/apollo-express.git`
 
 Inside the folder install dependencies
+
 `npm install`
 
 Once ready Start the application
+
 `npm run dev`
 
 ## Usage
@@ -22,11 +25,16 @@ For more information about GraphQL Query Structure visit [GraphQL Query Docs](ht
 ### Examples
 
 This command will Create a Single Register into MongoDB
-    `mutation {
-        userCreateOne(record: { name: "your name", email: "your@email" }){
-            record{
-            name
-            email
-            }
-        }
-    }`
+
+*** GraphQL Default Date format its 'YYYY-MM-DD' ***
+
+`mutation{
+  proyectCreateOne(record: {name: "", startpoint: "",endpoint:"",location:""}){
+    record{
+      name
+      startpoint
+      endpoint
+      location
+    }
+  }
+}`
