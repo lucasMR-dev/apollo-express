@@ -9,7 +9,8 @@ const UserQuery = {
 
 const UserMutation = {
     userUpdateOne: UserTC.getResolver('updateOne'),
-    userRemoveOne: UserTC.getResolver('removeOne')
+    userRemoveOne: UserTC.getResolver('removeOne'),
+    login: UserTC.getResolver('Auth')
 };
 
 module.exports = { UserQuery, UserMutation };
