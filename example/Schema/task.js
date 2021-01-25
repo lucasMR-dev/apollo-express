@@ -12,13 +12,8 @@ const TaskQuery = {
 
 const TaskMutation = {
     taskCreateOne: TaskTC.getResolver('createOne'),
-    taskCreateMany: TaskTC.getResolver('createMany'),
-    taskUpdateById: TaskTC.getResolver('updateById'),
     taskUpdateOne: TaskTC.getResolver('updateOne'),
-    taskUpdateMany: TaskTC.getResolver('updateMany'),
-    taskRemoveById: TaskTC.getResolver('removeById'),
-    taskRemoveOne: TaskTC.getResolver('removeOne'),
-    taskRemoveMany: TaskTC.getResolver('removeMany')
+    taskRemoveOne: TaskTC.getResolver('removeOne')
 };
 
 module.exports = { TaskQuery, TaskMutation };
