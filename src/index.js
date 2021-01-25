@@ -15,7 +15,8 @@ const app = express();
 // Apollo Config
 server.applyMiddleware({
   app,
-  cors: true
+  cors: true,
+  path: '/'
 });
 
 // Express Config and MongoDB config
