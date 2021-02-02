@@ -1,10 +1,10 @@
 const TaskTC = require('../DB/Models/tasks');
 
 const TaskQuery = {
-    getTask: TaskTC.getResolver('findOne'),
-    getAllTask: TaskTC.getResolver('findMany'),
-    getTaskCount: TaskTC.getResolver('count'),
-    getTaskPagination: TaskTC.getResolver('pagination')
+    Task: TaskTC.getResolver('findOne'),
+    AllTask: TaskTC.getResolver('findMany'),
+    TaskCount: TaskTC.getResolver('count'),
+    TaskPagination: TaskTC.getResolver('pagination')
 }
 
 const TaskMutation = {

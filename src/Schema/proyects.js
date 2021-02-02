@@ -1,10 +1,10 @@
 const ProyectTC = require('../DB/Models/proyects');
 
 const ProyectQuery = {
-    getProyect: ProyectTC.getResolver('findOne'),
-    getAllProyect: ProyectTC.getResolver('findMany'),
-    getProyectCount: ProyectTC.getResolver('count'),
-    getProyectPagination: ProyectTC.getResolver('pagination')
+    Proyect: ProyectTC.getResolver('findOne'),
+    AllProyect: ProyectTC.getResolver('findMany'),
+    ProyectCount: ProyectTC.getResolver('count'),
+    ProyectPagination: ProyectTC.getResolver('pagination')
 };
 
 const ProyectMutation = {

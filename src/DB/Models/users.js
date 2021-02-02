@@ -32,6 +32,19 @@ const UserSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', UserSchema);
 const UserTC = composeWithMongoose(User);
+
+const RegisterTC = schemaComposer.createObjectTC({
+    name: 'UserRegister',
+    fields:{
+        username: 'String!',
+        password: "String!",
+        email: "String!",
+        access_type: "String",
+        isActive: "Boolean"
+    }
+});
+
+const RegisterITC = toInputObjectType(RegisterTC);
   
 const InputTC = schemaComposer.createObjectTC({
     name: 'UserLogin',
@@ -43,6 +56,36 @@ const InputTC = schemaComposer.createObjectTC({
 
 const InputITC = toInputObjectType(InputTC);
 
+
+UserTC.addResolver({
+    kind: 'mutation',
+    name: 'register',
+    type: UserTC,
+    args: {
+        input: RegisterITC
+    },
+    resolve: async ({args}) => {
+        return new Promise( async (resolve, reject) => {
+            const { username, password, email, access_type, isActive } = args.input;
+            const user = new User({
+                username,
+                password,
+                email,
+                access_type,
+                isActive
+            });
+            bcrypt.genSalt(10, (err, salt) => {
+                bcrypt.hash(user.password, salt, async (err, hash) => {
+                    user.password = hash;
+                    const newUser = await user.save();
+                    if(!newUser) reject(err.message)
+                    resolve(newUser)
+                });
+            });
+        });
+    }
+});
+
 UserTC.addResolver({
     kind: 'mutation',
     name: 'Auth',
@@ -51,27 +94,40 @@ UserTC.addResolver({
         input: InputITC
     },
     resolve: async ({args}) => {
-        const username = args.input.username;
-        const password = args.input.password;
-        //Get user by username
-        const user = await User.findOne({username});
-        // Match password
-        bcrypt.compare(password, user.password, (err, isMatch) => {
-            if (isMatch) {
-                const active = user.isActive;
-                if (active){
-                    // JWT Token
-                    const token = jwt.sign(user.toJSON(), config.JWT_SECRET, {
-                        expiresIn: '1h',
-                        subject: user.id
-                    });
-                    const { iat, exp, sub } = jwt.decode(token);
-                    console.log({iat, exp, sub, token});
+        return new Promise( async (resolve, reject) => {
+            const { username, password } = args.input;
+            //Get user by username
+            const user = await User.findOne({username});
+            // Match password
+            bcrypt.compare(password, user.password, (err, isMatch) => {
+                if (isMatch) {
+                    const active = user.isActive;
+                    if (active){
+                        // JWT Token
+                        const token = jwt.sign(user.toJSON(), config.JWT_SECRET, {
+                            expiresIn: '1h',
+                            subject: user.id
+                        });
+                        const { iat, exp, sub } = jwt.decode(token);
+                        const data = { iat, exp, sub, token };
+                        resolve({
+                            // User Record
+                            username: user.username,
+                            email: user.email,
+                            access_type: user.access_type,
+                            isActive: user.isActive,
+                            // Auth Response
+                            iat: data.iat,
+                            exp: data.exp,
+                            sub: data.sub,
+                            token: data.token
+                        });
+                    }
                 }
-            }
-            else {
-                console.log('Authentication Failed');
-            }
+                else {
+                    reject('Authentication Failed');
+                }
+            });
         });
     }    
 });
