@@ -46,15 +46,20 @@ const RegisterTC = schemaComposer.createObjectTC({
 
 const RegisterITC = toInputObjectType(RegisterTC);
   
-const InputTC = schemaComposer.createObjectTC({
+const LoginTC = schemaComposer.createObjectTC({
     name: 'UserLogin',
     fields: {
         username: 'String!',
-        password: 'String!'
+        password: 'String!',
+        email: 'String',
+        iat: 'String',
+        exp: 'String',
+        sub: 'String',
+        token: 'String'
     }
 });
 
-const InputITC = toInputObjectType(InputTC);
+const LoginITC = toInputObjectType(LoginTC);
 
 
 UserTC.addResolver({
@@ -89,9 +94,9 @@ UserTC.addResolver({
 UserTC.addResolver({
     kind: 'mutation',
     name: 'Auth',
-    type: UserTC,
+    type: LoginTC,
     args: {
-        input: InputITC
+        input: LoginITC
     },
     resolve: async ({args}) => {
         return new Promise( async (resolve, reject) => {
@@ -111,12 +116,8 @@ UserTC.addResolver({
                         const { iat, exp, sub } = jwt.decode(token);
                         const data = { iat, exp, sub, token };
                         resolve({
-                            // User Record
-                            username: user.username,
-                            email: user.email,
-                            access_type: user.access_type,
-                            isActive: user.isActive,
                             // Auth Response
+                            email: user.email,
                             iat: data.iat,
                             exp: data.exp,
                             sub: data.sub,
