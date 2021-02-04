@@ -1,12 +1,14 @@
 const express = require('express');
-const { ApolloServer } = require('apollo-server-express');
+const { ApolloServer, AuthenticationError } = require('apollo-server-express');
 const moongose = require('mongoose');
 const config = require('./config');
 const graphQLSchema = require('./Schema');
+const tokenResolver = require('./Auth/tokenResolver');
 
 // Apollo Server Init
 const server = new ApolloServer({
-    schema: graphQLSchema
+    schema: graphQLSchema,
+    context: (request) => {tokenResolver(request)}
 });
 
 // Express Service Init

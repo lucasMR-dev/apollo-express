@@ -1,4 +1,5 @@
 const UserTC = require('../DB/Models/users');
+const authMiddleware  = require('../Auth/authMiddleware');
 
 const UserQuery = {
     User: UserTC.getResolver('findOne'),
@@ -9,9 +10,10 @@ const UserQuery = {
 
 const UserMutation = {
     userCreateOne: UserTC.getResolver('register'),
-    userUpdateOne: UserTC.getResolver('updateOne'),
-    userRemoveOne: UserTC.getResolver('removeOne'),
-    login: UserTC.getResolver('Auth')
+    login: UserTC.getResolver('Auth'),
+    // Protected Views
+    userUpdateOne: UserTC.getResolver('updateOne', [authMiddleware]),
+    userRemoveOne: UserTC.getResolver('removeOne', [authMiddleware])
 };
 
 module.exports = { UserQuery, UserMutation };
