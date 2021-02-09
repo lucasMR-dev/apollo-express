@@ -12,6 +12,9 @@ Inside the folder install dependencies
 
 `npm install`
 
+Copy and configure the config file
+` cp example.config.js src/config.js`
+
 Once ready Start the application
 
 `npm run dev`
