@@ -1,5 +1,5 @@
 const UserTC = require('../DB/Models/users');
-const authMiddleware  = require('../Auth/authMiddleware');
+const authMiddleware = require('../Auth/authMiddleware');
 
 const UserQuery = {
     User: UserTC.getResolver('findOne'),

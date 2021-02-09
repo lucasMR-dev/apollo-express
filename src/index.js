@@ -1,18 +1,38 @@
 const express = require('express');
-const { ApolloServer, AuthenticationError } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server-express');
 const moongose = require('mongoose');
+const expressJWT = require('express-jwt');
 const config = require('./config');
 const graphQLSchema = require('./Schema');
-const tokenResolver = require('./Auth/tokenResolver');
-
-// Apollo Server Init
-const server = new ApolloServer({
-    schema: graphQLSchema,
-    context: (request) => {tokenResolver(request)}
-});
 
 // Express Service Init
 const app = express();
+
+// Express JWT Middleware
+app.use(
+  expressJWT({
+    credentialsRequired: false,
+    secret: config.JWT_SECRET,
+    algorithms: ["HS256"]
+  })
+);
+
+// Apollo Server Init
+const server = new ApolloServer({
+  schema: graphQLSchema,
+  subscriptions: false,
+  context: ({ req }) => {
+    let loggedIn;
+    const user = req.user || null;
+    if(user != null){
+      loggedIn = true
+    }
+    else{
+      loggedIn = false
+    }
+    return { loggedIn }
+  }
+});
 
 // Apollo Config
 server.applyMiddleware({

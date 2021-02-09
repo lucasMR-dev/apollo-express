@@ -103,32 +103,38 @@ UserTC.addResolver({
             const { username, password } = args.input;
             //Get user by username
             const user = await User.findOne({username});
-            // Match password
-            bcrypt.compare(password, user.password, (err, isMatch) => {
-                if (isMatch) {
-                    const active = user.isActive;
-                    if (active){
-                        // JWT Token
-                        const token = jwt.sign(user.toJSON(), config.JWT_SECRET, {
-                            expiresIn: '1h',
-                            subject: user.id
-                        });
-                        const { iat, exp, sub } = jwt.decode(token);
-                        const data = { iat, exp, sub, token };
-                        resolve({
-                            // Auth Response
-                            email: user.email,
-                            iat: data.iat,
-                            exp: data.exp,
-                            sub: data.sub,
-                            token: data.token
-                        });
+            if(user){
+                // Match password
+                bcrypt.compare(password, user.password, (err, isMatch) => {
+                    if (isMatch) {
+                        const active = user.isActive;
+                        if (active){
+                            // JWT Token
+                            const token = jwt.sign(user.toJSON(), config.JWT_SECRET, {
+                                expiresIn: '1h',
+                                subject: user.id
+                            });
+                            const { iat, exp, sub } = jwt.decode(token);
+                            const data = { iat, exp, sub, token };
+                            resolve({
+                                // Auth Response
+                                email: user.email,
+                                iat: data.iat,
+                                exp: data.exp,
+                                sub: data.sub,
+                                token: data.token
+                            });
+                        }
                     }
-                }
-                else {
-                    reject('Authentication Failed');
-                }
-            });
+                    else {
+                        reject('Authentication Failed');
+                    }
+                });
+            }
+            else
+            {
+                reject('User not found');
+            }
         });
     }    
 });
