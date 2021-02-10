@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const { composeWithMongoose } = require('graphql-compose-mongoose');
+const ProyectTC = require('./proyects');
+const TaskTC = require('./tasks');
 
 const EmployeeSchema = new mongoose.Schema({
     names: {
@@ -28,17 +30,56 @@ const EmployeeSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    proyect: [{
-        type: mongoose.Schema.Types.Mixed,
+    proyectIds: [{
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'ProyectTC'
     }],
-    task: [{
-        type: mongoose.Schema.Types.Mixed,
+    tasksIds: [{
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'TaskTC'
     }]
 });
 
 const Employee = mongoose.model('Employee', EmployeeSchema);
 const EmployeeTC = composeWithMongoose(Employee);
+
+/**
+ * Proyect Relation
+ */
+EmployeeTC.addRelation(
+    'proyects',
+    () => ({
+      resolver: ProyectTC.getResolver('findMany'),
+      args: {
+        filter: source => ({
+          _operators:{
+            _id:{
+              in: source.proyectIds || []
+            }
+          }
+        }),
+      },
+      projection: { proyectIds: true },
+    })
+);
+/**
+ * Task Relation
+ */
+EmployeeTC.addRelation(
+    'tasks',
+    () => ({
+      resolver: TaskTC.getResolver('findMany'),
+      args: {
+        filter: source => ({
+          _operators:{
+            _id:{
+              in: source.tasksIds || []
+            }
+          }
+        }),
+      },
+      projection: { tasksIds: true },
+    })
+);
 
 module.exports = EmployeeTC;
