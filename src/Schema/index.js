@@ -5,17 +5,20 @@ const schemaComposer = new SchemaComposer();
 const { ProyectQuery, ProyectMutation } = require('./proyects');
 const { TaskQuery, TaskMutation } = require('./tasks');
 const { UserQuery, UserMutation } = require('./users');
+const { EmployeeQuery, EmployeeMutation } = require('./employees');
 
 schemaComposer.Query.addFields({
     ...ProyectQuery,
     ...TaskQuery,
-    ...UserQuery
+    ...UserQuery,
+    ...EmployeeQuery
 });
 
 schemaComposer.Mutation.addFields({
     ...ProyectMutation,
     ...TaskMutation,
-    ...UserMutation
+    ...UserMutation,
+    ...EmployeeMutation
 });
 
 module.exports = schemaComposer.buildSchema();
