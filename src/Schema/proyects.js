@@ -1,4 +1,5 @@
 const ProyectTC = require('../DB/Models/proyects');
+const authMiddleware = require('../Auth/authMiddleware');
 
 const ProyectQuery = {
     Proyect: ProyectTC.getResolver('findOne'),
@@ -8,9 +9,9 @@ const ProyectQuery = {
 };
 
 const ProyectMutation = {
-    proyectCreateOne: ProyectTC.getResolver('createOne'),
-    proyectUpdateOne: ProyectTC.getResolver('updateOne'),
-    proyectRemoveOne: ProyectTC.getResolver('removeOne')
+    proyectCreateOne: ProyectTC.getResolver('createOne', [authMiddleware]),
+    proyectUpdateOne: ProyectTC.getResolver('updateOne', [authMiddleware]),
+    proyectRemoveOne: ProyectTC.getResolver('removeOne', [authMiddleware])
 };
 
 module.exports = { ProyectQuery, ProyectMutation };

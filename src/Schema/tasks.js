@@ -1,4 +1,5 @@
 const TaskTC = require('../DB/Models/tasks');
+const authMiddleware  = require('../Auth/authMiddleware');
 
 const TaskQuery = {
     Task: TaskTC.getResolver('findOne'),
@@ -8,9 +9,10 @@ const TaskQuery = {
 }
 
 const TaskMutation = {
-    taskCreateOne: TaskTC.getResolver('createOne'),
-    taskUpdateOne: TaskTC.getResolver('updateOne'),
-    taskRemoveOne: TaskTC.getResolver('removeOne')
+    // Protected
+    taskCreateOne: TaskTC.getResolver('createOne', [authMiddleware]),
+    taskUpdateOne: TaskTC.getResolver('updateOne', [authMiddleware]),
+    taskRemoveOne: TaskTC.getResolver('removeOne', [authMiddleware])
 }
 
 module.exports = { TaskQuery, TaskMutation };

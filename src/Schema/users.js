@@ -9,9 +9,9 @@ const UserQuery = {
 };
 
 const UserMutation = {
-    userCreateOne: UserTC.getResolver('register'),
+    register: UserTC.getResolver('register'),
     login: UserTC.getResolver('Auth'),
-    // Protected Views
+    // Protected
     userUpdateOne: UserTC.getResolver('updateOne', [authMiddleware]),
     userRemoveOne: UserTC.getResolver('removeOne', [authMiddleware])
 };
