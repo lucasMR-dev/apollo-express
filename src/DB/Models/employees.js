@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 const { composeWithMongoose } = require('graphql-compose-mongoose');
+const { schemaComposer, toInputObjectType } = require('graphql-compose');
 const { GraphQLUpload } = require('apollo-server-express');
 const { createWriteStream } = require('fs');
+const { join, parse } = require('path');
+const config = require('../../config');
 const ProyectTC = require('./proyects');
 const TaskTC = require('./tasks');
 
@@ -83,6 +86,21 @@ EmployeeTC.addRelation(
       projection: { tasksIds: true },
     })
 );
+
+const UploadTC = schemaComposer.createObjectTC({
+  name: 'uploader',
+  fields:{
+      user: 'String!',
+      file: {
+        description: 'Image file.',
+        type: GraphQLUpload
+      },
+      imagepath: 'String'
+  }
+});
+
+const uploaderITC = toInputObjectType(UploadTC);
+
 /**
  * @imageupload
  * File Upload Resolver
@@ -91,36 +109,38 @@ EmployeeTC.addRelation(
 EmployeeTC.addResolver({
   kind: 'mutation',
   name: 'imageupload',
-  type: EmployeeTC,
+  type: UploadTC,
   args: {
-    employee: {
-      type: 'String!'
-    },
-    image: {
-      description: 'Image file.',
-      type: GraphQLUpload,
-    }
+    input: uploaderITC
   },
-  resolve: async (parent, {args}) => {
+  resolve: async ({args}) => {
     return new Promise( async (resolve, reject) => {
-      const { employee } = args.employee;
+      const user = args.input.user;
       // Get File properties
-      const { filename, mimetype, createReadStream } = await args.image;
-      const stream = createReadStream();
-      const {file, ext } = parse(filename,mimetype);
-      const saveFile = join(___dirname, `../../Public/uploads/${file}${ext}`);
-      const uploadStream = await createWriteStream(saveFile);
-      await stream.pipe(uploadStream(saveFile));
-      const picture = `http://localhost:4000/${saveFile}`;
-      const saveEmployee = Employee.findById(employee);
-      if(saveEmployee){
-        const uptEmp = await Employee.findOneAndUpdate({_id: employee}, picture, {runValidators: true, new: true});
-        resolve(uptEmp);
+      const { filename, createReadStream } = await args.input.file;
+      // Create readStream from request
+      let stream = createReadStream();
+      // Rename and Fix Path
+      let { ext, name } = parse(filename); 
+      const saveFile = join(__dirname, `../../../Public/uploads/${name}${ext}`);
+      // Save File to the server
+      let uploadStream = createWriteStream(saveFile);
+      await stream.pipe(uploadStream);
+      // Save file path to the DB
+      const picture = `${config.BASE_PATH}${saveFile.split('Public')[1]}`;
+      const emp = Employee.findOne({user});
+      console.log(emp);
+      if(emp){
+        const uptEmp = await Employee.findOneAndUpdate({user: user}, picture, { new: true});
+        resolve({
+          imagepath: uptEmp.picture,
+          user: uptEmp.user
+        });
       } else {
         reject ('No Valid Employee');
-      }    
-  })
-}
+      }
+    })
+  }
 });
 
 module.exports = EmployeeTC;
