@@ -8,10 +8,12 @@ const EmployeeQuery = {
     EmployeePagination: EmployeeTC.getResolver('pagination')
 };
 
-const EmployeeMutation = {
+const EmployeeMutation = {    
     employeeCreateOne: EmployeeTC.getResolver('createOne', [authMiddleware]),
     employeeUpdateOne: EmployeeTC.getResolver('updateOne', [authMiddleware]),
-    employeeRemoveOne: EmployeeTC.getResolver('removeOne', [authMiddleware])
+    employeeRemoveOne: EmployeeTC.getResolver('removeOne', [authMiddleware]),
+    // Files
+    employeeFileUpload: EmployeeTC.getResolver('imageupload'),
 };
 
 
