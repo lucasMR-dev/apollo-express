@@ -1,9 +1,9 @@
-const express = require('express');
-const { ApolloServer } = require('apollo-server-express');
-const moongose = require('mongoose');
-const expressJWT = require('express-jwt');
-const config = require('./config');
-const graphQLSchema = require('./Schema');
+const express = require("express");
+const { ApolloServer } = require("apollo-server-express");
+const moongose = require("mongoose");
+const expressJWT = require("express-jwt");
+const config = require("./config");
+const graphQLSchema = require("./Schema");
 
 // Express Service Init
 const app = express();
@@ -13,9 +13,12 @@ app.use(
   expressJWT({
     credentialsRequired: false,
     secret: config.JWT_SECRET,
-    algorithms: ["HS256"]
+    algorithms: ["HS256"],
   })
 );
+
+// Static Files
+app.use("/uploads", express.static("Public/uploads"));
 
 // Apollo Server Init
 const server = new ApolloServer({
@@ -24,21 +27,20 @@ const server = new ApolloServer({
   context: ({ req }) => {
     let loggedIn;
     const user = req.user || null;
-    if(user != null){
-      loggedIn = true
+    if (user != null) {
+      loggedIn = true;
+    } else {
+      loggedIn = false;
     }
-    else{
-      loggedIn = false
-    }
-    return { loggedIn }
-  }
+    return { loggedIn };
+  },
 });
 
 // Apollo Config
 server.applyMiddleware({
   app,
   cors: true,
-  path: '/'
+  path: "/",
 });
 
 // Express Config and MongoDB config
@@ -47,11 +49,13 @@ app.listen(config.PORT, () => {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
-    useCreateIndex: true
+    useCreateIndex: true,
   });
 });
 
 // Log once server start up
 const db = moongose.connection;
 db.on("error", (err) => console.log(err));
-db.once("open", () => console.log(`🚀 Server listening on port ${config.PORT}`));
+db.once("open", () =>
+  console.log(`🚀 Server listening on port ${config.PORT}`)
+);
