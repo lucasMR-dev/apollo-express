@@ -5,6 +5,7 @@ const { GraphQLUpload } = require("apollo-server-express");
 const { createWriteStream } = require("fs");
 const { join, parse } = require("path");
 const config = require("../../config");
+const UserTC = require("./users");
 const ProyectTC = require("./proyects");
 const TaskTC = require("./tasks");
 
@@ -52,52 +53,59 @@ const EmployeeSchema = new mongoose.Schema({
 const Employee = mongoose.model("Employee", EmployeeSchema);
 const EmployeeTC = composeWithMongoose(Employee);
 
+// Remove MongoID Fields
+EmployeeTC.removeField(["user", "proyectIds", "tasksIds"]);
+
+/**
+ * User Relation
+ */
+EmployeeTC.addRelation("users", {
+  resolver: () => UserTC.getResolver("findById"),
+  prepareArgs: {
+    _id: (source) => source.user || [],
+  },
+  projection: { user: true },
+});
+
 /**
  * Proyect Relation
  */
-EmployeeTC.addRelation("proyects", () => ({
-  resolver: ProyectTC.getResolver("findMany"),
-  args: {
-    filter: (source) => ({
-      _operators: {
-        _id: {
-          in: source.proyectIds || [],
-        },
-      },
-    }),
+EmployeeTC.addRelation("proyects", {
+  resolver: () => ProyectTC.getResolver("findByIds"),
+  prepareArgs: {
+    _ids: (source) => source.projectIds || [],
   },
   projection: { proyectIds: true },
-}));
+});
+
 /**
  * Task Relation
  */
-EmployeeTC.addRelation("tasks", () => ({
-  resolver: TaskTC.getResolver("findMany"),
-  args: {
-    filter: (source) => ({
-      _operators: {
-        _id: {
-          in: source.tasksIds || [],
-        },
-      },
-    }),
+EmployeeTC.addRelation("task", {
+  resolver: () => TaskTC.getResolver("findByIds"),
+  prepareArgs: {
+    _ids: (source) => source.tasksIds || [],
   },
   projection: { tasksIds: true },
-}));
+});
 
+// Object to be called on Resolver
 const UploadTC = schemaComposer.createObjectTC({
   name: "uploader",
   fields: {
+    // Args
     user: "String!",
     file: {
       description: "Image file.",
       type: GraphQLUpload,
     },
+    // Return Fields
     employee: "String",
     imagepath: "String",
   },
 });
 
+// Convertion Object to Input
 const uploaderITC = toInputObjectType(UploadTC);
 
 /**
@@ -130,13 +138,16 @@ EmployeeTC.addResolver({
       await stream.pipe(uploadStream);
       // Save file path to the DB
       const path = `${config.BASE_PATH}${saveFile.split("Public/uploads")[1]}`;
+      // Check if Employee exist
       const emp = await Employee.findOne({ user });
       if (emp) {
+        // Update Picture Field
         const uptEmp = await Employee.findOneAndUpdate(
           { user: user },
           { picture: path },
           { new: true }
         );
+        // Expose Custom Fields
         resolve({
           employee: uptEmp._id,
           imagepath: uptEmp.picture,

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const timestamp = require("mongoose-timestamp");
 const { composeWithMongoose } = require("graphql-compose-mongoose");
+const ProyectTC = require("./proyects");
 
 const TaskSchema = new mongoose.Schema({
   name: {
@@ -35,5 +36,17 @@ TaskSchema.plugin(timestamp);
 
 const Task = mongoose.model("Task", TaskSchema);
 const TaskTC = composeWithMongoose(Task);
+
+TaskTC.removeField("proyect");
+/**
+ * Proyect Relation
+ */
+TaskTC.addRelation("proyects", {
+  resolver: () => ProyectTC.getResolver("findById"),
+  prepareArgs: {
+    _id: (source) => source.proyect || [],
+  },
+  projection: { proyect: true },
+});
 
 module.exports = TaskTC;
