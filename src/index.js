@@ -1,12 +1,19 @@
 const express = require("express");
 const { ApolloServer } = require("apollo-server-express");
 const moongose = require("mongoose");
+const cors = require("cors");
 const expressJWT = require("express-jwt");
 const config = require("./config");
+const bodyParser = require("body-parser");
 const graphQLSchema = require("./Schema");
+const authRouter = require("./Routers/authRouter");
 
 // Express Service Init
 const app = express();
+
+// Cors Config
+app.use(cors());
+app.use(bodyParser.json());
 
 // Express JWT Middleware
 app.use(
@@ -16,6 +23,9 @@ app.use(
     algorithms: ["HS256"],
   })
 );
+
+// Express Rest Auth Handle 
+app.use("/auth", authRouter);
 
 // Static Files
 app.use("/uploads", express.static("Public/uploads"));
@@ -40,7 +50,7 @@ const server = new ApolloServer({
 server.applyMiddleware({
   app,
   cors: true,
-  path: "/",
+  path: "/graphql",
 });
 
 // Express Config and MongoDB config

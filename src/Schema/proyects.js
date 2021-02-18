@@ -3,15 +3,16 @@ const authMiddleware = require("../Auth/authMiddleware");
 
 const ProyectQuery = {
   Proyect: ProyectTC.getResolver("findOne"),
-  AllProyect: ProyectTC.getResolver("findMany"),
+  AllProyects: ProyectTC.getResolver("findMany"),
+  ProyectConnection: ProyectTC.getResolver("connection"),
   ProyectCount: ProyectTC.getResolver("count"),
   ProyectPagination: ProyectTC.getResolver("pagination"),
 };
 
 const ProyectMutation = {
-  proyectCreateOne: ProyectTC.getResolver("createOne", [authMiddleware]),
-  proyectUpdateOne: ProyectTC.getResolver("updateOne", [authMiddleware]),
-  proyectRemoveOne: ProyectTC.getResolver("removeOne", [authMiddleware]),
+  createProyect: ProyectTC.getResolver("createOne", [authMiddleware]),
+  updateProyect: ProyectTC.getResolver("updateOne", [authMiddleware]),
+  deleteProyect: ProyectTC.getResolver("removeOne", [authMiddleware]),
 };
 
 module.exports = { ProyectQuery, ProyectMutation };

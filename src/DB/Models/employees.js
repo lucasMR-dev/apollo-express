@@ -5,7 +5,7 @@ const { GraphQLUpload } = require("apollo-server-express");
 const { createWriteStream } = require("fs");
 const { join, parse } = require("path");
 const config = require("../../config");
-const UserTC = require("./users");
+const { UserTC } = require("./users");
 const ProyectTC = require("./proyects");
 const TaskTC = require("./tasks");
 
