@@ -6,8 +6,6 @@ const { createWriteStream } = require("fs");
 const { join, parse } = require("path");
 const config = require("../../config");
 const { UserTC } = require("./users");
-const ProyectTC = require("./proyects");
-const TaskTC = require("./tasks");
 
 const EmployeeSchema = new mongoose.Schema({
   names: {
@@ -35,58 +33,24 @@ const EmployeeSchema = new mongoose.Schema({
     ref: "User",
     required: true,
     unique: true,
-  },
-  proyectIds: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "ProyectTC",
-    },
-  ],
-  tasksIds: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "TaskTC",
-    },
-  ],
+  }
 });
 
 const Employee = mongoose.model("Employee", EmployeeSchema);
 const EmployeeTC = composeWithMongoose(Employee);
 
 // Remove MongoID Fields
-EmployeeTC.removeField(["user", "proyectIds", "tasksIds"]);
+EmployeeTC.removeField("user");
 
 /**
  * User Relation
  */
-EmployeeTC.addRelation("users", {
+EmployeeTC.addRelation("user", {
   resolver: () => UserTC.getResolver("findById"),
   prepareArgs: {
     _id: (source) => source.user || [],
   },
   projection: { user: true },
-});
-
-/**
- * Proyect Relation
- */
-EmployeeTC.addRelation("proyects", {
-  resolver: () => ProyectTC.getResolver("findByIds"),
-  prepareArgs: {
-    _ids: (source) => source.projectIds || [],
-  },
-  projection: { proyectIds: true },
-});
-
-/**
- * Task Relation
- */
-EmployeeTC.addRelation("task", {
-  resolver: () => TaskTC.getResolver("findByIds"),
-  prepareArgs: {
-    _ids: (source) => source.tasksIds || [],
-  },
-  projection: { tasksIds: true },
 });
 
 // Object to be called on Resolver
