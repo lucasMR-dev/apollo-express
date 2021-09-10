@@ -28,7 +28,7 @@ app.use(
 app.use("/auth", authRouter);
 
 // Static Files
-app.use("/uploads", express.static("Public/uploads"));
+app.use("/Public", express.static("Public/uploads"));
 
 // Apollo Server Init
 const server = new ApolloServer({
