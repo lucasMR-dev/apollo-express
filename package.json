@@ -1,6 +1,5 @@
 {
   "name": "express-graphql-template",
-  "version": "1.0",
   "description": "Apollo Express - GraphQL with MongoDB.",
   "main": "src/index.js",
   "scripts": {

@@ -8,17 +8,16 @@ exports.authenticate = (username, password) => {
             const user = await User.findOne({ username });
             // Match password
             bcrypt.compare(password, user.password, (err, isMatch) => {
-                //if(err) throw err;
-                if (isMatch) {
-                    resolve(user);
+                if(isMatch){
+                    resolve(user)
                 }
                 else {
-                    reject('Authentication Failed');
+                    reject({message: "Bad Credentials"})
                 }
             });
         }
         catch (err) {
-            reject('Authentication Failed '+err);
+            reject({message: 'Authentication Failed '+err});
         }
     });
 }

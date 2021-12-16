@@ -4,7 +4,6 @@ const moongose = require("mongoose");
 const cors = require("cors");
 const expressJWT = require("express-jwt");
 const config = require("./config");
-const bodyParser = require("body-parser");
 const graphQLSchema = require("./Schema");
 const authRouter = require("./Routers/authRouter");
 
@@ -13,7 +12,7 @@ const app = express();
 
 // Cors Config
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
 // Express JWT Middleware
 app.use(

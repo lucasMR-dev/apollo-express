@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const {User} = require("../DB/Models/users");
-const auth = require("../Auth/auth");
+const Auth = require("../Auth/auth");
 const config = require("../config");
 
 // Router Export
@@ -39,9 +39,9 @@ router.post("/register", (req, res, next) => {
 
 // Login
 router.post("/login", async (req, res, next) => {
-  const { username, password } = req.body;
   try {
-    const user = await auth.authenticate(username, password);
+    const { username, password } = req.body;  
+    const user = await Auth.authenticate(username, password);
     // JWT Token
     const token = jwt.sign(user.toJSON(), config.JWT_SECRET, {
       expiresIn: "1h",
@@ -58,9 +58,9 @@ router.post("/login", async (req, res, next) => {
 });
 
 // Refresh Token
-router.post("/refresh", async (req, res, next) => {
-  const { tokenWeb, user } = req.body;
+router.post("/refresh", async (req, res, next) => {  
   try {
+    const { tokenWeb, user } = req.body;
     const userObj = await User.findOne({ _id: user });
 
     const oldToken = jwt.verify(tokenWeb, config.JWT_SECRET, {
