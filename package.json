@@ -1,7 +1,6 @@
 {
   "name": "express-graphql-template",
-  "version": "0.0.1c",
-  "description": "",
+  "description": "Apollo Express - GraphQL with MongoDB.",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,9 +12,9 @@
     "Apollo Server",
     "GraphQL"
   ],
-  "author": "Lucas Mardones <lucas.mardones@vgr.cl",
+  "author": "Lucas Mardones <l.mardones91@gmail.com>",
   "contributors": [
-    "Lucas Mardones <lucas.mardones@vgr.cl"
+    "Lucas Mardones <l.mardones91@gmail.com>"
   ],
   "license": "ISC",
   "devDependencies": {

@@ -57,3 +57,24 @@ This command will Create a Single Register into MongoDB
     }  
   }
 ```
+
+##### Upload Files, Firecamp Example
+```
+  mutation INSERT_ONE($user: String!, $employee: String!, $file: Upload!){
+    employeeFileUpload(input:{user:$user, employee: $employee, file: $file}){
+        employee
+        imagepath
+    }
+  }
+  -----------------------------------------
+  Variables
+  {
+    "user": "userid",
+    "employee": "employeeId"    
+  }
+  -----------------------------------------
+  Files
+  {
+    "file": "file.extension"
+  }
+```
